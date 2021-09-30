@@ -21,6 +21,20 @@ namespace KudMVCEntityDemo.Controllers
             return View(employees.ToList());
         }
 
+
+        public ActionResult EmployeesByDepartment()
+        {
+            var employees = db.Employees.Include(e => e.Department)
+                .GroupBy(x => x.Department.Name)
+                .Select(y=> new DepartmentTotals
+                {
+                    Name = y.Key,
+                    Total = y.Count()
+
+                }).ToList().OrderByDescending(y => y.Total);
+            return View(employees.ToList());
+        }
+
         // GET: Employee/Details/5
         public ActionResult Details(int? id)
         {
@@ -50,6 +64,10 @@ namespace KudMVCEntityDemo.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "EmployeeId,Name,Gender,City,DepartmentId")] Employee employee)
         {
+            if(string.IsNullOrEmpty(employee.Name))
+            {
+                ModelState.AddModelError("Name", "The Name field is required");
+            }
             if (ModelState.IsValid)
             {
                 db.Employees.Add(employee);
@@ -82,11 +100,19 @@ namespace KudMVCEntityDemo.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "EmployeeId,Name,Gender,City,DepartmentId")] Employee employee)
+        // public ActionResult Edit([Bind(Include = "EmployeeId,Name,Gender,City,DepartmentId")] Employee employee)
+        public ActionResult Edit([Bind(Exclude = "Name")] Employee employee)
         {
+            Employee employeeFromDB = db.Employees.Single(x => x.EmployeeId == employee.EmployeeId);
+
+            employeeFromDB.Gender = employee.Gender;
+            employeeFromDB.City = employee.City;
+            employeeFromDB.DepartmentId = employee.DepartmentId;
+            employee.Name = employeeFromDB.Name;
+
             if (ModelState.IsValid)
             {
-                db.Entry(employee).State = EntityState.Modified;
+                db.Entry(employeeFromDB).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

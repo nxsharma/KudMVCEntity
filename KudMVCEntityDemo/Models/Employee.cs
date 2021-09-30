@@ -11,13 +11,20 @@ namespace KudMVCEntityDemo.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class Employee
     {
         public int EmployeeId { get; set; }
+
+        
         public string Name { get; set; }
+        [Required]
         public string Gender { get; set; }
+        [Required]
         public string City { get; set; }
+        [Required]
+        [Display(Name= "Department")]
         public Nullable<int> DepartmentId { get; set; }
     
         public virtual Department Department { get; set; }
