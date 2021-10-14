@@ -176,6 +176,7 @@
       <DependentUpon>EmployeeDataModel.edmx</DependentUpon>
       <LastGenOutput>EmployeeDataModel.cs</LastGenOutput>
     </Content>
+    <Content Include="Photos\JohnSmith.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <EntityDeploy Include="Models\EmployeeDataModel.edmx">
